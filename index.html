@@ -1,0 +1,452 @@
+<html><head><base href="https://example.com">
+<style>
+:root {
+    --primary: #2A3FFB;
+    --secondary: #FF6B6B;
+    --dark: #1A1A1A;
+    --light: #F5F5F5;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    background: var(--light);
+    color: var(--dark);
+    line-height: 1.6;
+}
+
+.hero {
+    min-height: 100vh;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.animated-shapes {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+.content {
+    position: relative;
+    z-index: 1;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1.5rem;
+    color: var(--primary);
+    font-weight: 800;
+}
+
+.highlight {
+    color: var(--secondary);
+}
+
+p {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+}
+
+.quiz-btn {
+    display: inline-block;
+    padding: 1.25rem 2.5rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    background: var(--primary);
+    color: white;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.quiz-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(42, 63, 251, 0.2);
+}
+
+.stats {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.stat {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--primary);
+}
+
+.stat-label {
+    font-size: 1rem;
+    color: var(--dark);
+}
+
+.quiz-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.quiz-container.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.quiz-content {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 15px;
+    max-width: 600px;
+    width: 90%;
+    position: relative;
+}
+
+.question {
+    margin-bottom: 2rem;
+}
+
+.question h2 {
+    font-size: 1.5rem;
+    color: var(--primary);
+    margin-bottom: 1.5rem;
+}
+
+.answer-btn {
+    display: block;
+    width: 100%;
+    padding: 1rem;
+    margin: 0.5rem 0;
+    border: 2px solid var(--primary);
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1.1rem;
+}
+
+.answer-btn:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #eee;
+    border-radius: 4px;
+    margin-bottom: 2rem;
+}
+
+.progress {
+    height: 100%;
+    background: var(--primary);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.results {
+    text-align: center;
+}
+
+.results h2 {
+    color: var(--primary);
+    margin-bottom: 1.5rem;
+}
+
+.recommendation {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin: 1.5rem 0;
+}
+
+.email-form {
+    margin-top: 2rem;
+    text-align: left;
+}
+
+.email-input {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1rem;
+    border: 2px solid var(--primary);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.email-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(42, 63, 251, 0.2);
+}
+
+.consent-checkbox {
+    display: flex;
+    align-items: start;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.consent-checkbox input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-top: 3px;
+}
+
+.error-message {
+    color: var(--secondary);
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    display: none;
+}
+
+.error-message.visible {
+    display: block;
+}
+
+@keyframes float {
+    0% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(5deg); }
+    100% { transform: translateY(0px) rotate(0deg); }
+}
+
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<section class="hero">
+    <svg class="animated-shapes" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <defs>
+            <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:rgba(42,63,251,0.1)" />
+                <stop offset="100%" style="stop-color:rgba(255,107,107,0.1)" />
+            </linearGradient>
+        </defs>
+        <circle cx="80" cy="20" r="5" fill="url(#grad1)" style="animation: float 6s infinite;">
+        <circle cx="20" cy="80" r="8" fill="url(#grad1)" style="animation: float 8s infinite;">
+        <circle cx="50" cy="50" r="3" fill="url(#grad1)" style="animation: float 7s infinite;">
+    </svg>
+
+    <div class="content">
+        <h1>Transform Your Business with the Power of <span class="highlight">Video</span></h1>
+        <p>Are you leaving money on the table by not leveraging explainer videos and motion design in your marketing strategy? Take our 2-minute quiz to find out your video marketing potential.</p>
+        
+        <button class="quiz-btn" onclick="startQuiz()">Take the Quiz Now</button>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-number">84%</div>
+                <div class="stat-label">of consumers bought a product after watching a video</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">300%</div>
+                <div class="stat-label">higher engagement with video content</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">2x</div>
+                <div class="stat-label">increase in conversion rates</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+function startQuiz() {
+    const questions = [
+        {
+            question: "Do you feel that your current brand messaging could be more engaging?",
+            options: ["Yes", "No", "Maybe"]
+        },
+        {
+            question: "Do your competitors use video or motion graphics in their marketing?",
+            options: ["Yes", "No", "Maybe"]
+        },
+        {
+            question: "Are you currently using video content to explain your products or services?",
+            options: ["Yes", "No", "Maybe"]
+        },
+        {
+            question: "Do you think your audience might need a clearer understanding of your product's benefits?",
+            options: ["Yes", "No", "Maybe"]
+        },
+        {
+            question: "Have you noticed a decrease in engagement with static or text-based content?",
+            options: ["Yes", "No", "Maybe"]
+        },
+        {
+            question: "Are your products or services complex or require detailed explanations?",
+            options: ["Yes", "No", "Maybe"]
+        },
+        {
+            question: "Do you find it challenging to maintain viewer attention on your website or social media?",
+            options: ["Yes", "No", "Maybe"]
+        },
+        {
+            question: "Would you like to simplify your messaging for new customers?",
+            options: ["Yes", "No", "Maybe"]
+        },
+        {
+            question: "Have you received feedback that your current content doesn't feel \"modern\" or \"dynamic\"?",
+            options: ["Yes", "No", "Maybe"]
+        },
+        {
+            question: "Do you have sales goals that aren't currently being met with your existing content?",
+            options: ["Yes", "No", "Maybe"]
+        }
+    ];
+
+    let currentQuestion = 0;
+    let answers = [];
+
+    const quizContainer = document.createElement('div');
+    quizContainer.className = 'quiz-container';
+    
+    const quizContent = document.createElement('div');
+    quizContent.className = 'quiz-content';
+
+    function updateQuestion() {
+        if (currentQuestion >= questions.length) {
+            showResults();
+            return;
+        }
+
+        const progress = ((currentQuestion + 1) / questions.length) * 100;
+        
+        quizContent.innerHTML = `
+            <div class="progress-bar">
+                <div class="progress" style="width: ${progress}%"></div>
+            </div>
+            <div class="question">
+                <h2>Question ${currentQuestion + 1} of ${questions.length}</h2>
+                <p>${questions[currentQuestion].question}</p>
+                ${questions[currentQuestion].options.map(option => `
+                    <button class="answer-btn" onclick="handleAnswer('${option}')">${option}</button>
+                `).join('')}
+            </div>
+        `;
+    }
+
+    function handleAnswer(answer) {
+        answers.push(answer);
+        currentQuestion++;
+        if (currentQuestion < questions.length) {
+            updateQuestion();
+        } else {
+            showResults();
+        }
+    }
+
+    function showResults() {
+        const yesCount = answers.filter(answer => answer === 'Yes').length;
+        let recommendation;
+        let potentialIncrease;
+
+        if (yesCount >= 7) {
+            recommendation = "Your business shows critical need for a motion design strategy!";
+            potentialIncrease = "50-70%";
+        } else if (yesCount >= 5) {
+            recommendation = "Your business could greatly benefit from motion design implementation!";
+            potentialIncrease = "30-50%";
+        } else {
+            recommendation = "There's opportunity to enhance your messaging with motion design!";
+            potentialIncrease = "20-30%";
+        }
+
+        quizContent.innerHTML = `
+            <div class="results">
+                <h2>Your Motion Design Strategy Assessment</h2>
+                <div class="recommendation">
+                    <h3>${recommendation}</h3>
+                    <p>Based on your responses, implementing a strategic motion design approach could boost your engagement and conversion rates by ${potentialIncrease}.</p>
+                </div>
+                <p>Ready to transform your brand messaging with dynamic motion content?</p>
+                <form class="email-form" onsubmit="handleEmailSubmit(event)">
+                    <input 
+                        type="email" 
+                        class="email-input" 
+                        placeholder="Enter your email to receive detailed results" 
+                        required
+                    >
+                    <div class="consent-checkbox">
+                        <input type="checkbox" id="consent" required>
+                        <label for="consent">I agree to receive my detailed results and additional information about motion design strategies.</label>
+                    </div>
+                    <div class="error-message" id="emailError"></div>
+                    <button type="submit" class="quiz-btn">Get Detailed Results (PDF)</button>
+                </form>
+                <button class="quiz-btn" onclick="window.location.href='https://example.com/consultation'" style="margin-top: 1rem;">
+                    Schedule Your Free Strategy Call
+                </button>
+            </div>
+        `;
+    }
+
+    function handleEmailSubmit(event) {
+        event.preventDefault();
+        const email = event.target.querySelector('input[type="email"]').value;
+        const errorElement = document.getElementById('emailError');
+        
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            errorElement.textContent = "Please enter a valid email address";
+            errorElement.classList.add('visible');
+            return;
+        }
+
+        event.target.innerHTML = `
+            <div style="text-align: center;">
+                <h3 style="color: var(--primary); margin-bottom: 1rem;">Thank you!</h3>
+                <p>Your detailed results have been sent to ${email}</p>
+            </div>
+        `;
+    }
+
+    window.handleAnswer = handleAnswer;
+    
+    quizContainer.appendChild(quizContent);
+    document.body.appendChild(quizContainer);
+    
+    setTimeout(() => {
+        quizContainer.classList.add('active');
+        updateQuestion();
+    }, 100);
+}
+</script>
+
+</body>
+</html>
